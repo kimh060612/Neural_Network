@@ -68,6 +68,8 @@ NeuralNet::NeuralNet(int Layer_num, int * Node_num, double Learning_rate, string
 		this->Bias[i] = Matrix(Node_num[i], 1);
 	}
 
+	this->Initialize_Weight();
+
 }
 
 NeuralNet::~NeuralNet()
@@ -94,7 +96,7 @@ void NeuralNet::Initialize_Weight()
 
 int NeuralNet::Feed_forward(Matrix *input)
 {
-	int Max_output;
+	int Max_output = 0;
 	double Max = -987654321;
 	Act_Func F(this->Act_name);
 
@@ -102,10 +104,21 @@ int NeuralNet::Feed_forward(Matrix *input)
 	{
 		this->Node[0](i, 0) = (*input)(i, 0);
 	}
+	
+	/*
+	for (int y = 0; y < 28; y++)
+	{
+		for (int x = 0; x < 28; x++)
+		{
+			cout << this->Node[0]((y * 28) + x, 0) << "   ";
+		}
+		cout << endl;
+	}
+	*/
 
 	for (int i = 1; i < this->Layer_num; i++)
 	{
-		this->Node[i] = this->Weight[i] * this->Node[i - 1] + this->Bias[i];
+		this->Node[i] = (this->Weight[i] * this->Node[i - 1]) + this->Bias[i];
 		this->Node[i] = Feed_Function(this->Node[i], F);
 	}
 
@@ -125,19 +138,19 @@ void NeuralNet::Calc_Delta(Matrix *target)
 {
 	Act_Func B(this->Act_name);
 
-	for (int i = this->Layer_num - 1; i > 0; i++)
+	for (int i = this->Layer_num - 1; i > 0; i--)
 	{
 		if (i == this->Layer_num - 1) this->Delta[i] = (this->Node[this->Layer_num - 1] - (*target))->*Backward_Function(this->Node[this->Layer_num - 1], B);
-		else this->Delta[i] = (Trans(this->Weight[i]) * this->Delta[i + 1])->*Backward_Function(this->Node[i], B);
+		else this->Delta[i] = (Trans(this->Weight[i + 1]) * this->Delta[i + 1])->*Backward_Function(this->Node[i], B);
 	}
 
 }
 
 void NeuralNet::Update_Weight()
 {
-	for (int i = this->Layer_num - 1; i > 0; i++)
+	for (int i = this->Layer_num - 1; i > 0; i--)
 	{
-		this->Weight[i] -= ((this->Learning_rate) * (this->Delta[i] * this->Node[i-1]));
+		this->Weight[i] -= ((this->Learning_rate) * (this->Delta[i] * Trans(this->Node[i-1])));
 		this->Bias[i] = this->Delta[i];
 	}
 }

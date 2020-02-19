@@ -103,7 +103,7 @@ void ReadMNIST_MAT(int NumberOfImages,Matrix *ARR, string Path)
 				{
 					unsigned char temp = 0;
 					file.read((char*)&temp, sizeof(temp));
-					ARR[i]((n_rows*r) + c, 1) = (double)temp;
+					ARR[i]((n_rows*r) + c, 0) = (double)temp;
 				}
 			}
 			cout << i << endl;
