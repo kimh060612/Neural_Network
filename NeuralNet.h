@@ -1,6 +1,7 @@
 #ifndef __NEURALNET_H__
+#define __NEURALNET_H__
+
 #include "Matrix.h"
-#include <cmath>
 #include <string>
 #include <time.h>
 
@@ -112,6 +113,9 @@ public:
 	}
 
 };
+
+void One_Hot_Encoding(int Data_Num, int *target, int num_class, Matrix *OneHot);
+
 #endif // !__NEURALNET_H__
 
 #pragma once

@@ -96,7 +96,7 @@ int NeuralNet::Feed_forward(Matrix *input)
 {
 	int Max_output;
 	double Max = -987654321;
-	Act_Func F("ReLU");
+	Act_Func F(this->Act_name);
 
 	for (int i = 0; i < this->Node_num[0]; i++)
 	{
@@ -123,23 +123,41 @@ int NeuralNet::Feed_forward(Matrix *input)
 
 void NeuralNet::Calc_Delta(Matrix *target)
 {
-	Act_Func B("ReLU");
+	Act_Func B(this->Act_name);
 
 	for (int i = this->Layer_num - 1; i > 0; i++)
 	{
-
+		if (i == this->Layer_num - 1) this->Delta[i] = (this->Node[this->Layer_num - 1] - (*target))->*Backward_Function(this->Node[this->Layer_num - 1], B);
+		else this->Delta[i] = (Trans(this->Weight[i]) * this->Delta[i + 1])->*Backward_Function(this->Node[i], B);
 	}
 
 }
 
 void NeuralNet::Update_Weight()
 {
-
+	for (int i = this->Layer_num - 1; i > 0; i++)
+	{
+		this->Weight[i] -= ((this->Learning_rate) * (this->Delta[i] * this->Node[i-1]));
+		this->Bias[i] = this->Delta[i];
+	}
 }
 
 int NeuralNet::Train(Matrix *Input, Matrix *Output)
 {
 	int Max_index = this->Feed_forward(Input);
 
-	return 0;
+	this->Calc_Delta(Output);
+	this->Update_Weight();
+
+	return Max_index;
+}
+
+void One_Hot_Encoding(int Data_Num,int *target, int num_class, Matrix *OneHot)
+{
+	for (int i = 0; i < Data_Num; i++)
+	{
+		Matrix Tmp(num_class,1);
+		Tmp(target[i], 0) = 1;
+		OneHot[i] = Tmp;
+	}
 }
