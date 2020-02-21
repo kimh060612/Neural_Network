@@ -31,12 +31,16 @@ public:
 	void Calc_Delta(Matrix *target);
 	void Update_Weight(); // Input: Optimizer Object
 	int Train(Matrix *Input, Matrix *Output);
+	void TestModel(Matrix *TestInput, Matrix *TestOutput);// 일단 CNN 짜고 하자
 
-	void SGD(Matrix *Input, Matrix *Output,int NumData, int BatchSize, int total_epoch);
+	void SGD(Matrix *Input, Matrix *Output, int NumData, int BatchSize, int total_epoch);
 	void SGD(Matrix &Gradient, double momentum_rate);
 	void Adagrad(Matrix &Graident, double Delta);
 	void RMSProp(Matrix &Gradient, double Delta, double Decay);
 	void Adam(Matrix &Gradient, double Delta, double Decay_F, double decay_S, int time);
+
+	//CONVNET과의 연결점 생성, 순전파와 역전파
+
 
 };
 

@@ -167,6 +167,10 @@ int NeuralNet::Train(Matrix *Input, Matrix *Output)
 	return Max_index;
 }
 
+void NeuralNet::TestModel(Matrix * TestInput, Matrix * TestOutput)
+{
+}
+
 void NeuralNet::SGD(Matrix * Input, Matrix * Output, int NumData, int BatchSize, int total_epoch)
 {
 	// Input: Input Set, Output: Outpupt Set
@@ -200,6 +204,7 @@ void NeuralNet::SGD(Matrix * Input, Matrix * Output, int NumData, int BatchSize,
 			int index = BatchSet[BatchIndex][i];
 			int Max_index = this->Feed_forward(&Input[index]);
 			this->Calc_Delta(&Output[index]);
+			int argmax_O = argmax_1d(Output[index].PTR_ROW(0),0,Output[index].row);
 			// Delta 계산
 			// Update 계산
 			for (int i = this->Layer_num - 1; i > 0; i--)
@@ -207,9 +212,7 @@ void NeuralNet::SGD(Matrix * Input, Matrix * Output, int NumData, int BatchSize,
 				BatchGradientWeight[i] += (this->Delta[i] * Trans(this->Node[i - 1]));
 				this->Bias[i] += this->Delta[i];
 			}
-
-
-
+			if (Max_index != argmax_O)Train_Error++;
 		}
 		//Weight Update
 		for (int i = this->Layer_num - 1; i > 0; i--)
@@ -220,10 +223,37 @@ void NeuralNet::SGD(Matrix * Input, Matrix * Output, int NumData, int BatchSize,
 			this->Weight[i] -= (this->Learning_rate) * (BatchGradientWeight[i]);
 			this->Bias[i] -= (this->Learning_rate)*(BatchGradientBias[i]);
 		}
+		Train_Error_rate = Train_Error / BatchSize;
 
-		// Test Model
-
+		cout << "-------------------------------------------------------------------" << endl;
+		cout << "Epoch: " << epoch << endl;
+		cout << "Train Error Rate: " << Train_Error_rate << endl;
+		cout << "-------------------------------------------------------------------" << endl;
 	}
+
+	delete[] BatchGradientWeight;
+	delete[] BatchGradientBias;
+
+}
+
+void NeuralNet::SGD(Matrix & Gradient, double momentum_rate)
+{
+
+}
+
+void NeuralNet::Adagrad(Matrix & Graident, double Delta)
+{
+
+}
+
+void NeuralNet::RMSProp(Matrix & Gradient, double Delta, double Decay)
+{
+
+}
+
+void NeuralNet::Adam(Matrix & Gradient, double Delta, double Decay_F, double decay_S, int time)
+{
+
 }
 
 
