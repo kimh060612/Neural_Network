@@ -28,8 +28,8 @@ public:
 	Matrix& operator+=(const Matrix&);
 	Matrix& operator-=(const Matrix&);
 	Matrix& operator*=(const Matrix&);
-	Matrix& operator*=(double);
-	Matrix& operator/=(double);
+	Matrix& operator*=(double num);
+	Matrix& operator/=(double num);
 	Matrix  operator^(int);
 
 	Matrix& operator=(double **MAT_);

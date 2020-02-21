@@ -30,13 +30,13 @@ public:
 	int Feed_forward(Matrix *input);
 	void Calc_Delta(Matrix *target);
 	void Update_Weight(); // Input: Optimizer Object
-	int Train(Matrix *Input, Matrix *Output,int NumData, int total_step, int Batch_Size);
+	int Train(Matrix *Input, Matrix *Output);
 
-	Matrix SGD(Matrix &Gradient);
-	Matrix SGD(Matrix &Gradient, double momentum_rate);
-	Matrix Adagrad(Matrix &Graident, double Delta);
-	Matrix RMSProp(Matrix &Gradient, double Delta, double Decay);
-	Matrix Adam(Matrix &Gradient, double Delta, double Decay_F, double decay_S, int time);
+	void SGD(Matrix *Input, Matrix *Output,int NumData, int BatchSize, int total_epoch);
+	void SGD(Matrix &Gradient, double momentum_rate);
+	void Adagrad(Matrix &Graident, double Delta);
+	void RMSProp(Matrix &Gradient, double Delta, double Decay);
+	void Adam(Matrix &Gradient, double Delta, double Decay_F, double decay_S, int time);
 
 };
 

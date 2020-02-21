@@ -8,7 +8,7 @@ Matrix Feed_Function(Matrix U, Act_Func F)
 	{
 		for (int j = 0; j < U.col; j++)
 		{
-			res(i, j) = F.Forward_Func(U(i,j));
+			res(i, j) = F.Forward_Func(U(i, j));
 		}
 	}
 
@@ -104,7 +104,7 @@ int NeuralNet::Feed_forward(Matrix *input)
 	{
 		this->Node[0](i, 0) = (*input)(i, 0);
 	}
-	
+
 	/*
 	cout << "--------------------------------------------------------------------------------------------------------" << endl;
 	for (int y = 0; y < 28; y++)
@@ -152,50 +152,87 @@ void NeuralNet::Update_Weight()
 {
 	for (int i = this->Layer_num - 1; i > 0; i--)
 	{
-		this->Weight[i] -= ((this->Learning_rate) * (this->Delta[i] * Trans(this->Node[i-1])));
-		this->Bias[i] = this->Delta[i];
+		this->Weight[i] -= ((this->Learning_rate) * (this->Delta[i] * Trans(this->Node[i - 1])));
+		this->Bias[i] -= (this->Learning_rate)*this->Delta[i];
 	}
 }
 
-int NeuralNet::Train(Matrix *Input, Matrix *Output, int NumData, int total_step, int Batch_Size)
+int NeuralNet::Train(Matrix *Input, Matrix *Output)
 {
-	
-	for (int epoch = 1; epoch < total_step; epoch++)
-	{
+	int Max_index = this->Feed_forward(Input);
 
+	this->Calc_Delta(Output);
+	this->Update_Weight();
+
+	return Max_index;
+}
+
+void NeuralNet::SGD(Matrix * Input, Matrix * Output, int NumData, int BatchSize, int total_epoch)
+{
+	// Input: Input Set, Output: Outpupt Set
+	srand((unsigned int)time(NULL));
+	vector<vector<int>> BatchSet = mini_batch_index_generator(NumData, BatchSize);
+	int BatchNum = NumData / BatchSize;
+	Matrix *BatchGradientWeight;
+	Matrix *BatchGradientBias;
+	BatchGradientWeight = new Matrix[BatchSize];
+	BatchGradientBias = new Matrix[BatchSize];
+	for (int i = 1; i < this->Layer_num; i++)
+	{
+		BatchGradientWeight[i] = Matrix(Node_num[i], Node_num[i - 1]);
+	}
+	for (int i = 0; i < this->Layer_num; i++)
+	{
+		this->Bias[i] = Matrix(Node_num[i], 1);
+	}
+
+	for (int epoch = 1; epoch <= total_epoch; epoch++)
+	{	
 		int Train_Error = 0;
 		double Train_Error_rate = 0.;
 		int Test_Error = 0;
 		double Test_Error_rate = 0.;
+		int BatchIndex = (rand() % BatchNum);
 
-		int Max_index = this->Feed_forward(Input);
+		// Train SGD
+		for (int i = 0; i < BatchSize; i++)
+		{
+			int index = BatchSet[BatchIndex][i];
+			int Max_index = this->Feed_forward(&Input[index]);
+			this->Calc_Delta(&Output[index]);
+			// Delta 계산
+			// Update 계산
+			for (int i = this->Layer_num - 1; i > 0; i--)
+			{
+				BatchGradientWeight[i] += (this->Delta[i] * Trans(this->Node[i - 1]));
+				this->Bias[i] += this->Delta[i];
+			}
 
-		this->Calc_Delta(Output);
-		//------------------------ Event
-		this->Update_Weight();
 
-		return Max_index;
+
+		}
+		//Weight Update
+		for (int i = this->Layer_num - 1; i > 0; i--)
+		{
+			BatchGradientWeight[i] /= (double)BatchSize;
+			this->Bias[i] /= (double)BatchSize;
+			//Update
+			this->Weight[i] -= (this->Learning_rate) * (BatchGradientWeight[i]);
+			this->Bias[i] -= (this->Learning_rate)*(BatchGradientBias[i]);
+		}
+
+		// Test Model
+
 	}
-
 }
 
-Matrix NeuralNet::SGD(Matrix & Gradient)
-{
-	return Matrix();
-}
 
-Matrix NeuralNet::Adagrad(Matrix & Graident, double Delta)
-{
-	return Matrix();
-}
 
-	
-
-void One_Hot_Encoding(int Data_Num,int *target, int num_class, Matrix *OneHot)
+void One_Hot_Encoding(int Data_Num, int *target, int num_class, Matrix *OneHot)
 {
 	for (int i = 0; i < Data_Num; i++)
 	{
-		Matrix Tmp(num_class,1);
+		Matrix Tmp(num_class, 1);
 		Tmp(target[i], 0) = 1;
 		OneHot[i] = Tmp;
 	}
