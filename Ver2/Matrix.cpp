@@ -447,6 +447,21 @@ int argmax_1d(double *A, int s, int e)
 	return max;
 }
 
+Matrix ZeroPadding(Matrix & M)
+{
+	return Matrix();
+}
+
+Matrix Correlation(Matrix & op1, Matrix & op2, int stride)
+{
+	return Matrix();
+}
+
+Matrix Convolution(Matrix & op1, Matrix & op2, int stride)
+{
+	return Matrix();
+}
+
 
 
 Matrix operator+(const Matrix& m1, const Matrix& m2)

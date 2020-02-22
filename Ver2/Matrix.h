@@ -59,6 +59,11 @@ double CoFactor(Matrix Target, int p, int q);
 Matrix Inverse(Matrix target);
 int argmax_1d(double *A, int s, int e);
 
+//-----------------------ConvNet Àü¿ë------------------------//
+Matrix ZeroPadding(Matrix &M);
+Matrix Correlation(Matrix &op1, Matrix &op2, int stride);
+Matrix Convolution(Matrix &op1, Matrix &op2, int stride);
+
 #endif // !__MATRIX_H__
 
 

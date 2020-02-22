@@ -11,7 +11,7 @@ using std::vector;
 
 class NeuralNet
 {
-private:
+protected:
 	int Layer_num;
 	int *Node_num;
 	Matrix *Node;
@@ -40,7 +40,6 @@ public:
 	void Adam(Matrix &Gradient, double Delta, double Decay_F, double decay_S, int time);
 
 	//CONVNET과의 연결점 생성, 순전파와 역전파
-
 
 };
 
