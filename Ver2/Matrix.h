@@ -58,10 +58,11 @@ double Determinant(Matrix Target); // Same with Inverse_Matrix.
 double CoFactor(Matrix Target, int p, int q);
 Matrix Inverse(Matrix target);
 int argmax_1d(double *A, int s, int e);
+Matrix RotPi(Matrix &M);
 
 //-----------------------ConvNet Àü¿ë------------------------//
-Matrix ZeroPadding(Matrix &M);
-Matrix Correlation(Matrix &op1, Matrix &op2, int stride);
+Matrix ZeroPadding(Matrix &M, int padding);
+Matrix Correlation(Matrix &op1, Matrix &op2, int stride);  // op1: Image Map, op2: Filter
 Matrix Convolution(Matrix &op1, Matrix &op2, int stride);
 
 #endif // !__MATRIX_H__

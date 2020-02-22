@@ -447,22 +447,59 @@ int argmax_1d(double *A, int s, int e)
 	return max;
 }
 
-Matrix ZeroPadding(Matrix & M)
+Matrix RotPi(Matrix & M)
+{
+	Matrix res(M.row, M.col);
+
+	for (int i = 0; i < M.row; i++)
+	{
+		for (int j = 0; j < M.col; j++)
+		{
+			res(M.row - 1 - i, M.col - 1 - j) = M(i, j);
+		}
+	}
+
+	return res;
+}
+
+Matrix ZeroPadding(Matrix & M, int padding)
 {
 	return Matrix();
 }
 
-Matrix Correlation(Matrix & op1, Matrix & op2, int stride)
+Matrix Correlation(Matrix & op1, Matrix & op2, int stride) // 이미 패딩된 값이 들어온다.
 {
-	return Matrix();
+	int Out_H, Out_W;
+	Out_H = ((op1.row - op2.row) / stride) + 1;
+	Out_W = ((op1.col - op2.col) / stride) + 1;
+
+	Matrix res(Out_H, Out_W);
+
+	for (int i = 0; i < Out_H; i++)
+	{
+		for (int j = 0; j < Out_W; j++)
+		{
+			double sum = 0.;
+			for (int p = 0; p < op2.row; p++)
+			{
+				for (int q = 0; q < op2.col; q++)
+				{
+					sum += op1(i + stride * p, j + stride * q) * op2(p, q);
+				}
+			}
+			res(i, j) = sum;
+		}
+	}
+
+	return res;
 }
 
 Matrix Convolution(Matrix & op1, Matrix & op2, int stride)
 {
-	return Matrix();
+	Matrix tmp = RotPi(op2);
+	Matrix res = Correlation(op1, tmp, stride);
+	return res;
 }
-
-
 
 Matrix operator+(const Matrix& m1, const Matrix& m2)
 {
