@@ -462,7 +462,7 @@ Matrix RotPi(Matrix & M)
 	return res;
 }
 
-Matrix ZeroPadding(Matrix & M, int padding)
+Matrix ZeroPadding(Matrix & M, int padding) // 오늘 내일?
 {
 	return Matrix();
 }
@@ -498,6 +498,33 @@ Matrix Convolution(Matrix & op1, Matrix & op2, int stride)
 {
 	Matrix tmp = RotPi(op2);
 	Matrix res = Correlation(op1, tmp, stride);
+	return res;
+}
+
+Matrix MaxPooling(Matrix & op1, int stride, int * PoolingSize) // 오늘 내일? 이것도 오늘 내일? 잘 모르겠다 일단 Q-learning을 다 짜고 생각을 하자.
+{
+	int PoolingH = PoolingSize[0];
+	int PoolingW = PoolingSize[1];
+	int OutH = ((op1.row - PoolingH) / stride) + 1;
+	int OutW = ((op1.col - PoolingW) / stride) + 1;
+	Matrix res(OutH, OutW);
+
+	for (int i = 0; i < OutH; i++)
+	{
+		for (int j = 0; j < OutW; j++)
+		{
+			double Max = -987654321.;
+			for (int p = 0; p < PoolingH; p++)
+			{
+				for (int q = 0; q < PoolingW; q++)
+				{
+					Max = max(Max, op1(i + stride * p, j + stride * q));
+				}
+			}
+			res(i, j) = Max;
+		}
+	}
+
 	return res;
 }
 

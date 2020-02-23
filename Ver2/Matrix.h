@@ -5,6 +5,7 @@
 #include <cmath>
 #include <memory.h>
 #define det(a, b) (a+b)%2 == 0 ? 1 : -1
+#define max(a, b) a > b ? a : b
 
 using namespace std;
 
@@ -64,6 +65,7 @@ Matrix RotPi(Matrix &M);
 Matrix ZeroPadding(Matrix &M, int padding);
 Matrix Correlation(Matrix &op1, Matrix &op2, int stride);  // op1: Image Map, op2: Filter
 Matrix Convolution(Matrix &op1, Matrix &op2, int stride);
+Matrix MaxPooling(Matrix &op1, int stride, int *PoolingSize); // Pooling Size는 무조건 크기가 2인 int형 동적할당
 
 #endif // !__MATRIX_H__
 
