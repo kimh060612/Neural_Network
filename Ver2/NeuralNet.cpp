@@ -187,11 +187,11 @@ void NeuralNet::SGD(Matrix * Input, Matrix * Output, int NumData, int BatchSize,
 	}
 	for (int i = 0; i < this->Layer_num; i++)
 	{
-		this->Bias[i] = Matrix(Node_num[i], 1);
+		BatchGradientBias[i] = Matrix(Node_num[i], 1);
 	}
 
 	for (int epoch = 1; epoch <= total_epoch; epoch++)
-	{	
+	{
 		int Train_Error = 0;
 		double Train_Error_rate = 0.;
 		int Test_Error = 0;
@@ -204,13 +204,13 @@ void NeuralNet::SGD(Matrix * Input, Matrix * Output, int NumData, int BatchSize,
 			int index = BatchSet[BatchIndex][i];
 			int Max_index = this->Feed_forward(&Input[index]);
 			this->Calc_Delta(&Output[index]);
-			int argmax_O = argmax_1d(Output[index].PTR_ROW(0),0,Output[index].row);
+			int argmax_O = argmax_1d(Output[index].PTR_COL(0), 0, Output[index].row);
 			// Delta 계산
 			// Update 계산
 			for (int i = this->Layer_num - 1; i > 0; i--)
 			{
 				BatchGradientWeight[i] += (this->Delta[i] * Trans(this->Node[i - 1]));
-				this->Bias[i] += this->Delta[i];
+				BatchGradientBias[i] += this->Delta[i];
 			}
 			if (Max_index != argmax_O)Train_Error++;
 		}
@@ -218,12 +218,12 @@ void NeuralNet::SGD(Matrix * Input, Matrix * Output, int NumData, int BatchSize,
 		for (int i = this->Layer_num - 1; i > 0; i--)
 		{
 			BatchGradientWeight[i] /= (double)BatchSize;
-			this->Bias[i] /= (double)BatchSize;
+			BatchGradientBias[i] /= (double)BatchSize;
 			//Update
 			this->Weight[i] -= (this->Learning_rate) * (BatchGradientWeight[i]);
 			this->Bias[i] -= (this->Learning_rate)*(BatchGradientBias[i]);
 		}
-		Train_Error_rate = Train_Error / BatchSize;
+		Train_Error_rate = ((double)Train_Error / (double)BatchSize)*100;
 
 		cout << "-------------------------------------------------------------------" << endl;
 		cout << "Epoch: " << epoch << endl;

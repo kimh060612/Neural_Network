@@ -71,11 +71,11 @@ int main()
 	}
 	*/
 
-	int NN[4] = { 28 * 28, 100,10 };
-	NeuralNet Net(3, NN, 0.25, "Sigmoid");
-	srand((unsigned int)time(NULL));
+	int NN[4] = { 28 * 28, 100, 100,10 };
+	NeuralNet Net(4, NN, 0.5, "Sigmoid");
+	//srand((unsigned int)time(NULL));
 
-	
+	Net.SGD(TrainDATA, TrainLabel, 10000,1000,1000);
 
 	delete[] TrainDATA;
 	delete[] TrainLabel;

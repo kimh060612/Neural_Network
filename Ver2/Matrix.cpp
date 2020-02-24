@@ -119,7 +119,7 @@ Matrix Trans(Matrix A)
 	return res;
 }
 
-inline double * Matrix::PTR_ROW(int index)
+double * Matrix::PTR_ROW(int index)
 {
 	if (index <0 || index > this->row)
 	{
@@ -137,7 +137,7 @@ inline double * Matrix::PTR_ROW(int index)
 	}
 }
 
-inline double * Matrix::PTR_COL(int index)
+double * Matrix::PTR_COL(int index)
 {
 	if (index <0 || index > this->col)
 	{
@@ -155,14 +155,78 @@ inline double * Matrix::PTR_COL(int index)
 	}
 }
 
-inline double Matrix::EigenValue()
+Matrix Matrix::GetRow(int index)
 {
-	return 0.0;
+	if (index <0 || index > this->row)
+	{
+		throw domain_error("Error: Index out of range!");
+	}
+	Matrix res(1, this->col);
+	for (int i = 0; i < this->col; i++)
+	{
+		res(0, i) = this->MAT[index][i];
+	}
+	return res;
 }
 
-inline Matrix Matrix::EigenVector()
+Matrix Matrix::GetCol(int index)
 {
-	return Matrix();
+	if (index <0 || index > this->col)
+	{
+		throw domain_error("Error: Index out of range!");
+	}
+	Matrix res(this->row, 1);
+	for (int i = 0; i < this->row; i++)
+	{
+		res(i, 0) = this->MAT[i][index];
+	}
+	return res;
+}
+
+Matrix Matrix::EigenValue(int Max_iter)
+{
+	if (this->row != this->col) throw domain_error("Error: Invaild matrix size");
+	int N = this->row;
+	Matrix EigenVal(1,N);
+	Matrix A(N, N);
+	A = *this;
+
+	for (int epoch = 0; epoch < Max_iter; epoch)
+	{
+		Matrix Q(N, N);
+		Matrix R(N, N);
+		QR_Decompose(A, Q, R);
+		A = R * Q;
+	}
+	for (int i = 0; i < N; i++)
+	{
+		EigenVal(0, i) = A(i, i);
+	}
+
+	return EigenVal;
+}
+
+Matrix Matrix::EigenVector(int Max_iter)
+{
+	if (this->row != this->col) throw domain_error("Error: Invaild matrix size");
+	int N = this->row;
+	Matrix EigenVal = this->EigenValue(Max_iter);
+	Matrix EigenVec(N,N);
+
+	for (int i = 0; i < N; i++)
+	{
+		Matrix I(N, N);
+		I.Identity();
+		Matrix Tmp = (*this) - EigenVal(0,i)*I;
+		Matrix Zeros(N, 1);
+		Matrix EigenROW = solve(*this, Zeros);
+		for (int j = 0; j < N; j++)
+		{
+			EigenVec(j, i) = EigenROW(j,0);
+		}
+	}
+
+	return EigenVec;
 }
 
 void Matrix::show()
@@ -460,6 +524,78 @@ Matrix RotPi(Matrix & M)
 	}
 
 	return res;
+}
+
+Matrix solve(Matrix A, Matrix b)
+{
+	// Gaussian elimination
+	for (int i = 0; i < A.row; ++i) {
+		if (A(i,i) == 0) {
+			// pivot 0 - throw error
+			throw domain_error("Error: the coefficient matrix has 0 as a pivot. Please fix the input and try again.");
+		}
+		for (int j = i + 1; j < A.row; ++j) {
+			for (int k = i + 1; k < A.col; ++k) {
+				A(j,k) -= A(i,k) * (A(j,i) / A(i,i));
+				if (A(j,k) < EPS && A(j,k) > -1 * EPS)
+					A(j,k) = 0;
+			}
+			b(j,0) -= b(i,0) * (A(j,i) / A(i,i));
+			if (A(j,0) < EPS && A(j,0) > -1 * EPS)
+				A(j,0) = 0;
+			A(j,i) = 0;
+		}
+	}
+
+	// Back substitution
+	Matrix x(b.row, 1);
+	x(x.row - 1,0) = b(x.row - 1,0) / A(x.row - 1,x.row - 1);
+	if (x(x.row - 1,0) < EPS && x(x.row - 1,0) > -1 * EPS)
+		x(x.row - 1,0) = 0;
+	for (int i = x.row - 2; i >= 0; --i) {
+		int sum = 0;
+		for (int j = i + 1; j < x.row; ++j) {
+			sum += A(i,j) * x(j,0);
+		}
+		x(i,0) = (b(i,0) - sum) / A(i,i);
+		if (x(i,0) < EPS && x(i, 0) > -1 * EPS)
+			x(i, 0) = 0;
+	}
+
+	return x;
+}
+
+void QR_Decompose(Matrix & A, Matrix & Q, Matrix & R)
+{
+	if (A.col == A.row) throw domain_error("Error: The matrix size doesn't fit!");
+
+	int n = A.row;
+	for (int i = 0; i < n; i++)
+	{
+		Matrix A_i = A.GetCol(i); // 1*N
+		Matrix Q_i = A_i;
+		for (int j = 0; j < i; j++)
+		{
+			Matrix Q_j = Q.GetRow(j); // N*1
+			R(j, i) = (A_i * Q_j)(0,0);
+			Matrix tmp = R(j,i)*Q_j;
+			Q_i = Q_i - tmp;
+		}
+		double sum = 0;
+		for (int j = 0; j < n; j++)
+		{
+			sum += Q_i(j, 0)*Q_i(j, 0);
+		}
+		double Ravg = sqrt(sum);
+		R(i, i) = Ravg;
+		Q_i /= R(i, i);
+		for (int j = 0; j < n; j++)
+		{
+			Q(i, j) = Q_i(j, 0);
+		}
+	}
+
+	Q = Trans(Q);
 }
 
 Matrix ZeroPadding(Matrix & M, int padding) // ¿À´Ã ³»ÀÏ?

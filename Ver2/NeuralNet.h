@@ -2,7 +2,6 @@
 #define __NEURALNET_H__
 
 #include "Matrix.h"
-//#include "Optimizer.h"
 #include <string>
 #include <time.h>
 #include <vector>

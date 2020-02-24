@@ -6,6 +6,7 @@
 #include <memory.h>
 #define det(a, b) (a+b)%2 == 0 ? 1 : -1
 #define max(a, b) a > b ? a : b
+#define EPS 1e-10
 
 using namespace std;
 
@@ -32,15 +33,14 @@ public:
 	Matrix& operator*=(double num);
 	Matrix& operator/=(double num);
 	Matrix  operator^(int);
-
 	Matrix& operator=(double **MAT_);
 
 	double *PTR_ROW(int index);
 	double *PTR_COL(int index);
-	//------TODO--------
-	double EigenValue();
-	Matrix EigenVector();
-	//----------------------
+	Matrix GetRow(int index);
+	Matrix GetCol(int index);
+	Matrix EigenValue(int Max_iter); // 1*N Matrix that each element is Eigen Value
+	Matrix EigenVector(int Max_iter); // N*N Matrix that each Column is Eigen Vector
 	void Identity();
 	void show();
 };
@@ -60,6 +60,8 @@ double CoFactor(Matrix Target, int p, int q);
 Matrix Inverse(Matrix target);
 int argmax_1d(double *A, int s, int e);
 Matrix RotPi(Matrix &M);
+Matrix solve(Matrix A, Matrix b);
+void QR_Decompose(Matrix &A, Matrix &Q, Matrix &R); // Q, R will be N*N size, 0-initialize.
 
 //-----------------------ConvNet Àü¿ë------------------------//
 Matrix ZeroPadding(Matrix &M, int padding);
