@@ -57,11 +57,11 @@ Matrix operator->*(const Matrix &op1, const Matrix&op2);
 
 double Determinant(Matrix Target); // Same with Inverse_Matrix.
 double CoFactor(Matrix Target, int p, int q);
-Matrix Inverse(Matrix target);
+Matrix Inverse(Matrix target); // Inverse Matrix Calc.
 int argmax_1d(double *A, int s, int e);
-Matrix RotPi(Matrix &M);
-Matrix solve(Matrix A, Matrix b);
-void QR_Decompose(Matrix &A, Matrix &Q, Matrix &R); // Q, R will be N*N size, 0-initialize.
+Matrix RotPi(Matrix &M); // Rotate Filter 180 degree
+Matrix solve(Matrix A, Matrix b);// Solve Ax = b linear Equation
+void QR_Decompose(Matrix &A, Matrix &Q, Matrix &R); // QR-Decomposition function. Q, R will be N*N size, 0-initialize.
 
 //-----------------------ConvNet Àü¿ë------------------------//
 Matrix ZeroPadding(Matrix &M, int padding);

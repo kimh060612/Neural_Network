@@ -1,7 +1,8 @@
 #ifndef __CONVNET_H__
 #include "Matrix.h"
-#define CONV2D 0
-#define POOLING 1
+#include <vector>
+
+using std::vector;
 
 class Conv2DNet
 {
