@@ -1,6 +1,10 @@
 #include "NeuralNet.h"
 
 
+NeuralNet::NeuralNet()
+{
+}
+
 NeuralNet::NeuralNet(int Layer_num, int * Node_num, double Learning_rate, string Act_)
 {
 	this->Act_name = Act_;
@@ -142,6 +146,8 @@ void NeuralNet::TestModel(Matrix * TestInput, Matrix * TestOutput)
 {
 }
 
+//-------------------------------------------------------------------------------------------------------------
+// 대공사 필요함..
 void NeuralNet::SGD(Matrix * Input, Matrix * Output, int NumData, int BatchSize, int total_epoch)
 {
 	// Input: Input Set, Output: Outpupt Set
@@ -227,7 +233,7 @@ void NeuralNet::Adam(Matrix & Gradient, double Delta, double Decay_F, double dec
 
 }
 
-
+//-------------------------------------------------------------------------------------------------------------
 
 void One_Hot_Encoding(int Data_Num, int *target, int num_class, Matrix *OneHot)
 {

@@ -22,6 +22,7 @@ protected:
 
 public:
 
+	NeuralNet();
 	NeuralNet(int Layer_num, int* Node_num, double Learning_rate, string Act_);
 	~NeuralNet();
 

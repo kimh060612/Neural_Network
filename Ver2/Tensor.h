@@ -3,7 +3,7 @@
 
 #include "Matrix.h"
 
-class Tensor // Tensor Object will deal with 3D& 4D Tensor. 
+class Tensor // Tensor Object will deal with 3D& 4D Tensor.
 {
 private:
 	// for 3D Tensor
