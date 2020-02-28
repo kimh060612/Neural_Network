@@ -24,7 +24,8 @@ private:
 	vector<pair<int, int>> Stride_Padding_Pooling;
 	vector<int> Model;
 	
-	int LayerNum = 0;
+	int Num_Data;
+	int LayerNumCONVNET = 0;
 	int Learing_rate;
 
 public:
