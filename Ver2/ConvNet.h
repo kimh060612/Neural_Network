@@ -34,7 +34,7 @@ public:
 	~Conv2DNet();
 
 	void set_Input(int *size);	// Input image size setting. 4D image will be input. [N, H, W, D]
-	void Put_Conv2DNet(int *size, int stride, int Padding); // CONV2D input will be 4D [N, H, W, D]
+	void Put_Conv2DNet(int *size, int* stride, int* Padding); // CONV2D input will be 4D [N, H, W, D]
 	void Put_Pooling(int *size, int stride, int Padding); // POOLING input will be 4D [N, H, W, D] ([1,H,W,1] is Recommended)
 	void put_FCNN(int Layer_num, int* Node_num, double Learning_rate, string Act_);
 
@@ -47,6 +47,7 @@ public:
 };
 
 Matrix Flatten(Tensor &Map);
+pair<int, int> OutSize(int H, int W, int strideH, int strideW, int PaddingH, int PaddingW, int FilterH, int FilterW);
 
 #endif // !__CONVNET_H__
 #pragma once

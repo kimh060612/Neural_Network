@@ -20,24 +20,29 @@ void Conv2DNet::set_Input(int *size)
 	this->LayerNumCONVNET++;
 }
 
-void Conv2DNet::Put_Conv2DNet(int *size,int stride, int Padding)
+void Conv2DNet::Put_Conv2DNet(int *size,int* stride, int* Padding)
 {
+	int n = this->FeatrueMap.size();
+	int inH = this->FeatrueMap[n - 1].Height;
+	int inW = this->FeatrueMap[n - 1].Width;
 	this->Model.push_back(CONV2D);
 	Tensor Weight(size[0], size[1], size[2], size[3]);
+	pair<int, int> OutS = OutSize(inH, inW, stride[0], stride[1], Padding[0], Padding[0], size[1], size[2]);
+	Tensor OUTMAP(OutS.first,OutS.second, size[3]);
 
 	this->WeightFilter.push_back(Weight);
-
-	this->Stride_Padding_CONV.push_back(make_pair(stride, Padding));
+	this->FeatrueMap.push_back(OUTMAP);
+	//this->Stride_Padding_CONV.push_back(make_pair(stride, Padding));
 	this->LayerNumCONVNET++;
 }
 
-void Conv2DNet::Put_Pooling(int *size, int stride, int Padding)
+void Conv2DNet::Put_Pooling(int *size, int* stride, int* Padding)
 {
 	this->Model.push_back(POOLING);
 	Tensor Pooling(size[0], size[1], size[2], size[3]);
 
 	this->PoolingFilter.push_back(Pooling);
-	this->Stride_Padding_Pooling.push_back(make_pair(stride, Padding));
+	//this->Stride_Padding_Pooling.push_back(make_pair(stride, Padding));
 
 }
 
@@ -67,7 +72,9 @@ Matrix Flatten(Tensor & Map)
 	return Matrix();
 }
 
-pair<int, int> OutSize(int H, int W, int strideH, int strideW, int Padding)
+pair<int, int> OutSize(int H, int W, int strideH, int strideW, int PaddingH, int PaddingW, int FilterH, int FilterW)
 {
-	
+	int outH = ((H - FilterH + 2*PaddingH) / strideH) + 1;
+	int outW = ((W - FilterW + 2 * PaddingH) / strideW) + 1;
+	return make_pair(outH, outW);
 }
