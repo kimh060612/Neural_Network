@@ -598,16 +598,34 @@ void QR_Decompose(Matrix & A, Matrix & Q, Matrix & R)
 	Q = Trans(Q);
 }
 
-Matrix ZeroPadding(Matrix & M, int padding) // ¿À´Ã ³»ÀÏ?
+Matrix ZeroPadding(Matrix & M, int *padding) // ¿À´Ã ³»ÀÏ?
 {
-	return Matrix();
+	Matrix RES(M.row + 2*padding[0], M.col + 2*padding[1]);
+	int OutH = M.row + 2 * padding[0];
+	int OutW = M.col + 2 * padding[1];
+
+	for (int i = 0, ii = 0; i < OutH; i++)
+	{
+		for (int j = 0, jj = 0; j < OutW; j++)
+		{
+			if ((i < padding[0] || i >= M.row) || (j < padding[1] || j >= M.col)) RES(i, j) = 0;
+			else
+			{
+				RES(i, j) = M(ii, jj);
+				ii++;
+				jj++;
+			}
+		}
+	}
+
+	return RES;
 }
 
-Matrix Correlation(Matrix & op1, Matrix & op2, int stride) // ÀÌ¹Ì ÆÐµùµÈ °ªÀÌ µé¾î¿Â´Ù.
+Matrix Correlation(Matrix & op1, Matrix & op2, int *stride) // ÀÌ¹Ì ÆÐµùµÈ °ªÀÌ µé¾î¿Â´Ù.
 {
 	int Out_H, Out_W;
-	Out_H = ((op1.row - op2.row) / stride) + 1;
-	Out_W = ((op1.col - op2.col) / stride) + 1;
+	Out_H = ((op1.row - op2.row) / stride[0]) + 1;
+	Out_W = ((op1.col - op2.col) / stride[1]) + 1;
 
 	Matrix res(Out_H, Out_W);
 
@@ -620,7 +638,7 @@ Matrix Correlation(Matrix & op1, Matrix & op2, int stride) // ÀÌ¹Ì ÆÐµùµÈ °ªÀÌ µ
 			{
 				for (int q = 0; q < op2.col; q++)
 				{
-					sum += op1(i + stride * p, j + stride * q) * op2(p, q);
+					sum += op1(i + stride[0] * p, j + stride[1] * q) * op2(p, q);
 				}
 			}
 			res(i, j) = sum;
@@ -630,19 +648,19 @@ Matrix Correlation(Matrix & op1, Matrix & op2, int stride) // ÀÌ¹Ì ÆÐµùµÈ °ªÀÌ µ
 	return res;
 }
 
-Matrix Convolution(Matrix & op1, Matrix & op2, int stride)
+Matrix Convolution(Matrix & op1, Matrix & op2, int *stride)
 {
 	Matrix tmp = RotPi(op2);
 	Matrix res = Correlation(op1, tmp, stride);
 	return res;
 }
 
-Matrix MaxPooling(Matrix & op1, int stride, int * PoolingSize) // ¿À´Ã ³»ÀÏ? ÀÌ°Íµµ ¿À´Ã ³»ÀÏ? Àß ¸ð¸£°Ú´Ù ÀÏ´Ü Q-learningÀ» ´Ù Â¥°í »ý°¢À» ÇÏÀÚ.
+Matrix MaxPooling(Matrix & op1, int *stride, int * PoolingSize) // ¿À´Ã ³»ÀÏ? ÀÌ°Íµµ ¿À´Ã ³»ÀÏ? Àß ¸ð¸£°Ú´Ù ÀÏ´Ü Q-learningÀ» ´Ù Â¥°í »ý°¢À» ÇÏÀÚ.
 {
 	int PoolingH = PoolingSize[0];
 	int PoolingW = PoolingSize[1];
-	int OutH = ((op1.row - PoolingH) / stride) + 1;
-	int OutW = ((op1.col - PoolingW) / stride) + 1;
+	int OutH = ((op1.row - PoolingH) / stride[0]) + 1;
+	int OutW = ((op1.col - PoolingW) / stride[1]) + 1;
 	Matrix res(OutH, OutW);
 
 	for (int i = 0; i < OutH; i++)
@@ -654,7 +672,7 @@ Matrix MaxPooling(Matrix & op1, int stride, int * PoolingSize) // ¿À´Ã ³»ÀÏ? ÀÌ°
 			{
 				for (int q = 0; q < PoolingW; q++)
 				{
-					Max = max(Max, op1(i + stride * p, j + stride * q));
+					Max = max(Max, op1(i + stride[0] * p, j + stride[1] * q));
 				}
 			}
 			res(i, j) = Max;

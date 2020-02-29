@@ -8,15 +8,16 @@ class Tensor // Tensor Object will deal with 3D& 4D Tensor.
 private:
 	// for 3D Tensor
 	Matrix* M;
-	int Height;
-	int Width;
-	int Depth;
 	// for 4D Tensor.
 	Matrix ** FD;
-	int NumSet = 0;
 	// Discirminator
 	bool Is3D;
 public:
+
+	int Height;
+	int Width;
+	int Depth;
+	int NumSet = 0;
 
 	Tensor();
 	Tensor(int H, int W, int D);

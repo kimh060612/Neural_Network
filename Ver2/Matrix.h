@@ -64,10 +64,10 @@ Matrix solve(Matrix A, Matrix b);// Solve Ax = b linear Equation
 void QR_Decompose(Matrix &A, Matrix &Q, Matrix &R); // QR-Decomposition function. Q, R will be N*N size, 0-initialize.
 
 //-----------------------ConvNet 전용------------------------//
-Matrix ZeroPadding(Matrix &M, int padding);
-Matrix Correlation(Matrix &op1, Matrix &op2, int stride);  // op1: Image Map, op2: Filter
-Matrix Convolution(Matrix &op1, Matrix &op2, int stride);
-Matrix MaxPooling(Matrix &op1, int stride, int *PoolingSize); // Pooling Size는 무조건 크기가 2인 int형 동적할당
+Matrix ZeroPadding(Matrix &M, int *padding);
+Matrix Correlation(Matrix &op1, Matrix &op2, int *stride);  // op1: Image Map, op2: Filter
+Matrix Convolution(Matrix &op1, Matrix &op2, int *stride);
+Matrix MaxPooling(Matrix &op1, int *stride, int *PoolingSize); // Pooling Size는 무조건 크기가 2인 int형 배열
 
 #endif // !__MATRIX_H__
 
