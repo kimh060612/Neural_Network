@@ -18,14 +18,13 @@ private:
 	vector<Tensor> FeatrueMap;
 	vector<Tensor> DeltaMap;
 	vector<Tensor> WeightFilter;
-	vector<Tensor> PoolingFilter;
+	vector<int*> PoolingFilter;
 	vector<Matrix> Bias;
-	vector<pair<int, int>> Stride_Padding_CONV;
-	vector<pair<int, int>> Stride_Padding_Pooling;
+	vector<pair<int*, int*>> Stride_Padding_CONV;
+	vector<pair<int*, int*>> Stride_Padding_Pooling;
 	vector<int> Model;
 	
 	int Num_Data;
-	int LayerNumCONVNET = 0;
 	int Learing_rate;
 
 public:
