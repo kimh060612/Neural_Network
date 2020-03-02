@@ -28,10 +28,12 @@ void Conv2DNet::Put_Conv2DNet(int *size,int* stride, int* Padding)
 	Tensor Weight(size[0], size[1], size[2], size[3]);
 	pair<int, int> OutS = OutSize(inH, inW, stride[0], stride[1], Padding[0], Padding[0], size[1], size[2]);
 	Tensor OUTMAP(OutS.first,OutS.second, size[3]);
+	Matrix BIAS(1,size[3]);
 
 	this->WeightFilter.push_back(Weight);
 	this->FeatrueMap.push_back(OUTMAP);
 	this->Stride_Padding_CONV.push_back(make_pair(stride, Padding));
+	this->BiasMap.push_back(BIAS);
 }
 
 void Conv2DNet::Put_Pooling(int *size, int* stride, int* Padding)
@@ -51,29 +53,93 @@ void Conv2DNet::Put_Pooling(int *size, int* stride, int* Padding)
 void Conv2DNet::put_FCNN(int Layer_num, int* Node_num, double Learning_rate, string Act_)
 {
 	this->Model.push_back(FCNN);
+	this->Act_name = Act_;
+	this->Layer_num = Layer_num;
+	this->Learning_rate = Learning_rate;
+
+	// First Layer is Input Layer
+
+	this->Node_num = new int[this->Layer_num];
+	for (int i = 0; i < this->Layer_num; i++)
+	{
+		this->Node_num[i] = Node_num[i];
+	}
+
+	this->Weight = new Matrix[this->Layer_num];
+	for (int i = 1; i < this->Layer_num; i++)
+	{
+		this->Weight[i] = Matrix(Node_num[i], Node_num[i - 1]);
+	}
+
+	this->Node = new Matrix[this->Layer_num];
+	for (int i = 0; i < this->Layer_num; i++)
+	{
+		this->Node[i] = Matrix(Node_num[i], 1);
+	}
+
+	this->Delta = new Matrix[this->Layer_num];
+	for (int i = 1; i < this->Layer_num; i++) // Useless in Input Layer
+	{
+		this->Delta[i] = Matrix(Node_num[i], 1);
+	}
+
+	this->Bias = new Matrix[this->Layer_num];
+	for (int i = 0; i < this->Layer_num; i++)
+	{
+		this->Bias[i] = Matrix(Node_num[i], 1);
+	}
 
 }
 
-void Conv2DNet::Forward()
+void Conv2DNet::Forward(Tensor &Input)
+{
+
+}
+
+void Conv2DNet::Calc_Delta(Matrix &Output)
+{
+
+}
+
+void Conv2DNet::Optimize(Optimizer &Op)
 {
 }
 
-void Conv2DNet::Calc_Delta()
-{
-}
-
-void Conv2DNet::Backward()
-{
-}
 
 void Conv2DNet::Train()
 {
 
 }
 
-Matrix Flatten(Tensor & Map)
+
+
+Matrix Flatten(Tensor & Map) // Will Be 4D Tensor
 {
-	return Matrix();
+	int size = Map.Depth * Map.Height * Map.Width * Map.NumSet;
+	Matrix RES(1, size);
+
+	int resindex = 0;
+	for (int i = 0; i < Map.NumSet; i++)
+	{
+		for (int j = 0; j < Map.Depth; j++)
+		{
+			for (int k = 0; k < Map.Height; k++)
+			{
+				for (int l = 0; l < Map.Width; l++)
+				{
+					RES(0, resindex) = Map(k,l,j,i);
+					resindex++;
+				}
+			}
+		}
+	}
+
+	return RES;
+}
+
+Tensor UnFlatten(Matrix & Map, int * size)
+{
+	/*TODO*/
 }
 
 pair<int, int> OutSize(int H, int W, int strideH, int strideW, int PaddingH, int PaddingW, int FilterH, int FilterW)

@@ -2,6 +2,7 @@
 #define __CONVNET_H__
 #include "Tensor.h"
 #include "NeuralNet.h"
+#include "Optimizer.h"
 #include <vector>
 
 #define INPUT 0
@@ -19,7 +20,7 @@ private:
 	vector<Tensor> DeltaMap;
 	vector<Tensor> WeightFilter;
 	vector<int*> PoolingFilter;
-	vector<Matrix> Bias;
+	vector<Matrix> BiasMap;
 	vector<pair<int*, int*>> Stride_Padding_CONV;
 	vector<pair<int*, int*>> Stride_Padding_Pooling;
 	vector<int> Model;
@@ -37,15 +38,16 @@ public:
 	void Put_Pooling(int *size, int* stride, int* Padding); // POOLING input will be 4D [N, H, W, D] ([1,H,W,1] is Recommended)
 	void put_FCNN(int Layer_num, int* Node_num, double Learning_rate, string Act_);
 
-	void Forward();
-	void Calc_Delta();
-	void Backward(); // Update & Gradient Descent Optimizer Needed!
+	void Forward(Tensor &Input);
+	void Calc_Delta(Matrix &Output);
+	void Optimize(Optimizer &Op); // Update & Gradient Descent Optimizer Needed!
 
 	void Train();
 
 };
 
 Matrix Flatten(Tensor &Map);
+Tensor UnFlatten(Matrix &Map, int *size);
 pair<int, int> OutSize(int H, int W, int strideH, int strideW, int PaddingH, int PaddingW, int FilterH, int FilterW);
 
 #endif // !__CONVNET_H__
